@@ -56,3 +56,7 @@ resp = requests.get(url, headers=headers)
 parsed = resp.json()
 
 print(json.dumps(parsed, indent=4, sort_keys=True))
+
+for i in range(10):
+    print(parsed['artists'][i]['genres'])
+#     print(parsed[i]['genres'])
