@@ -36,3 +36,23 @@ for i in range(10):
           ['album']['artists'][0]['name'])
 
     print()
+
+
+# print(ids)
+
+modified_ids = ", ".join(ids)
+modified_ids = modified_ids.replace(' ', '')
+
+print(f'hello {modified_ids}')
+
+url = f"https://api.spotify.com/v1/artists?ids={modified_ids}"
+
+headers["Accept"] = "application/json"
+headers["Content-Type"] = "application/json"
+headers["Authorization"] = "Bearer BQAcAM-2JvuMudKgcNNv2Qzsty52jhomgkkLPtApOVu7A9fTIJoq6tBu54Ekyvq6Gtzvypdg0EDqPOT7ngtbCNGP1P2YryBbXhlgivQuYg-rv4DSNuWM2PyNV-gTpyRKHvMoPCnNi6ntOGBCYUbIh5apjV0yi8BBe1c1rbgFYytEHWew_4VrthlqTzOV"
+
+resp = requests.get(url, headers=headers)
+
+parsed = resp.json()
+
+print(json.dumps(parsed, indent=4, sort_keys=True))
