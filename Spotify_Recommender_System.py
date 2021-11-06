@@ -3,14 +3,34 @@ from typing import List
 import requests
 from requests.structures import CaseInsensitiveDict
 
-TOKEN_ACCESS = 'BQCv_emMY2JRcWC0efmAla68ScX-KBzS31iKmLlfMq7SFKhDJAcHOijbGAxL2K_qDDK0Nt50YqmvjsJUGoOcurWMcEJWpj3CDAskks9gMIm4ctTmdJiZPa_jf3jOi26j2rXPCV0UBMtFL5RfU9ma4iAsl01ir4xBDAzHa3FAFJIuNpLa-X9mWYKGLzUG'
+TOKEN_ACCESS_TRACKS = "Bearer BQCsSlCmmf7mDCFKRB8N3uEDYttx2YI76xR-OTfoCFuwRayHsjBz4enY3-vtVuEDMkLPsUnfV7N-Tpumdyn_1a0Vx0lPWh7Y2mShxQ2QUCekPvqMQ7eajuHPiRkWEewdoQo2zWn6JKbPh7pHyTbf_cerdVfqu5971HweFJmmHYB2b0iXQI3j5FTR3Paz"
+TOKEN_ACCESS_GENRE = "Bearer BQBBKLxHDyj73VN3iJ_vBQkRNjOG_eM5-m_0LerpquF1srV3J7wIOyY5ACS_ierqpkoqDtkR15eSiapguAHm2V2OeULssCJUV1QjZPqKX6NlmGM59eo6lwmbRlwnjOQYSRuURshAz7OBK_FOIO2A17LgY5dUzpWnKHvQjs_BtZKVgjaLfz8TYjozTfqB"
+TOKEN_ACCESS_FT_PLAYLIST = "Bearer BQCZNJ-F73xPccDN-xPWyVJeFivJgu9SIB3w68Ji144SsKEYnt1UakM-XAQxoaA_szufJz-bmiMHhephQ-JjcTY9jtCf_iLDloRFnVfdxtluOcWGnfrXtsb9M9oNeO_Q3CO5USUlGX2t8UBSOD5Lm8eBI9tvmMU0Ll7Al8jmN241r-dAeDDRWqqUH3OM"
+TOKEN_ACCESS_PL_TRACKS = "Bearer BQCP8CAS5fB_9DsyQNNoUnZdaq5qTy5dbcSmSQu7X8QnE4SQ0GCAjfBTq6l7TudNsjudD7eiCT8AOgH0BzIgPwtGmSGunX2EbRH_tc2bUNgb4BPnA9Sqr7c838wEsX92qzY_AspjWjXgtTWO31xM_tyuMsdpOrIu78f4t65fesbdJ0iJqRaPoY8PG8ux"
+LIMIT = 10
 
-url = "https://api.spotify.com/v1/me/tracks?market=ES&limit=10&offset=5"
+
+def get_genre(modified_ids):
+
+    url = f"https://api.spotify.com/v1/artists?ids={modified_ids}"
+
+    headers["Accept"] = "application/json"
+    headers["Content-Type"] = "application/json"
+    headers["Authorization"] = TOKEN_ACCESS_GENRE
+
+    resp = requests.get(url, headers=headers)
+    return resp.json()
+
+
+url = f"https://api.spotify.com/v1/me/tracks?market=ES&limit={LIMIT}&offset=5"
 
 headers = CaseInsensitiveDict()
 headers["Accept"] = "application/json"
 headers["Content-Type"] = "application/json"
-headers["Authorization"] = "Bearer BQC9hG_IXStBFEFBPEsOC0BwSG6twlmEzM1IiaY2JTpBIwMa3G4-u7vvkIpIMQZf7ZZnjLh2CJ-HoHyn5rgmWu4RTLtAo7deN1nFXyll7H2q8_XGNgFLJw5mT6curOaR5KmNbHuzzwsUoYXpYmBmLL13cBL6V1bFzJxBcFjbeDtK9hQo9LaoOxhQA4pZ"
+headers["Authorization"] = TOKEN_ACCESS_TRACKS
+
+
+resp = requests.get(url, headers=headers)
 
 resp = requests.get(url, headers=headers)
 parsed = resp.json()
@@ -38,33 +58,93 @@ for i in range(10):
     print()
 
 
-# print(ids)
-
 modified_ids = ", ".join(ids)
 modified_ids = modified_ids.replace(' ', '')
+parsed = get_genre(modified_ids)
+
+#print(json.dumps(parsed, indent=4, sort_keys=True))
+# genre = {}
+# for i in range(10):
+#     if parsed['artists'][i]['genres'] in genre[parsed['artists'][i]['genres']].keys():
+#         genre[parsed['artists'][i]['genres']] += 1
+#     else:
+#         genre[parsed['artists'][i]['genres']] = 1
+# print(genre)
 
 
-url = f"https://api.spotify.com/v1/artists?ids={modified_ids}"
+genres = []
+for i in range(10):
+    genres.append(parsed['artists'][i]['genres'])
 
+print(genres)
+
+genre_occurance = {}
+for genre in genres:
+    for i in genre:
+        if i in genre_occurance.keys():
+            genre_occurance[i] += 1
+        else:
+            genre_occurance[i] = 1
+
+print()
+genre_occurance = dict(
+    sorted(genre_occurance.items(), key=lambda item: item[1]))
+print(genre_occurance)
+
+genres = []
+for i in range(10):
+    genres.append(parsed['artists'][i]['genres'])
+
+
+url = "https://api.spotify.com/v1/browse/featured-playlists?country=PH"
+
+headers = CaseInsensitiveDict()
 headers["Accept"] = "application/json"
 headers["Content-Type"] = "application/json"
-headers["Authorization"] = "Bearer BQAcAM-2JvuMudKgcNNv2Qzsty52jhomgkkLPtApOVu7A9fTIJoq6tBu54Ekyvq6Gtzvypdg0EDqPOT7ngtbCNGP1P2YryBbXhlgivQuYg-rv4DSNuWM2PyNV-gTpyRKHvMoPCnNi6ntOGBCYUbIh5apjV0yi8BBe1c1rbgFYytEHWew_4VrthlqTzOV"
+headers["Authorization"] = TOKEN_ACCESS_FT_PLAYLIST
 
 resp = requests.get(url, headers=headers)
 
 parsed = resp.json()
-
 print(json.dumps(parsed, indent=4, sort_keys=True))
 
-for i in range(10):
-    print(parsed['artists'][i]['genres'])
-#     print(parsed[i]['genres'])
 
-genre = {}
-for i in range(10):
-    if parsed['artists'][i]['genres'] in genre[parsed['artists'][i]['genres']].keys():
-        genre[parsed['artists'][i]['genres']] += 1
-    else:
-        genre[parsed['artists'][i]['genres']] = 1
+playlists = {}
+playlist_ids = []
 
-print(genre)
+for item in parsed['playlists']['items']:
+    playlists[item['id']] = item['name']
+    playlist_ids.append(item['id'])
+
+    print(f"{item['id']}\n{item['name']}")
+    print()
+
+url = "https://api.spotify.com/v1/playlists/37i9dQZF1DXcZQSjptOQtk/tracks?market=PH"
+
+headers = CaseInsensitiveDict()
+headers["Accept"] = "application/json"
+headers["Content-Type"] = "application/json"
+headers["Authorization"] = TOKEN_ACCESS_PL_TRACKS
+
+
+resp = requests.get(url, headers=headers)
+data = resp.json()
+print(json.dumps(data, indent=4, sort_keys=True))
+
+
+# print(data['items'][0])
+# print(json.dumps(data['items'][0]['track']['album']['name'], indent=4, sort_keys=True))
+tracks_population = {}
+for item in data['items']:
+    track_id = item['track']['album']['id']
+    track_name = item['track']['album']['name']
+    artists_id = item['track']['album']['artists'][0]['id']
+    artists_name = item['track']['album']['artists'][0]['name']
+    tracks_population[track_id] = [track_name, {artists_id: artists_name}]
+    # print(item['track']['album']['name'])
+
+# print(tracks_population)
+
+    # print(item['track']['album']['id'])
+    # print(item['track']['album']['artists'][0]['name'])
+    # print(item['track']['album']['artists'][0]['id'])
