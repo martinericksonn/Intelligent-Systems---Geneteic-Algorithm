@@ -43,7 +43,6 @@ for i in range(10):
 modified_ids = ", ".join(ids)
 modified_ids = modified_ids.replace(' ', '')
 
-print(f'hello {modified_ids}')
 
 url = f"https://api.spotify.com/v1/artists?ids={modified_ids}"
 
@@ -60,3 +59,12 @@ print(json.dumps(parsed, indent=4, sort_keys=True))
 for i in range(10):
     print(parsed['artists'][i]['genres'])
 #     print(parsed[i]['genres'])
+
+genre = {}
+for i in range(10):
+    if parsed['artists'][i]['genres'] in genre[parsed['artists'][i]['genres']].keys():
+        genre[parsed['artists'][i]['genres']] += 1
+    else:
+        genre[parsed['artists'][i]['genres']] = 1
+
+print(genre)
