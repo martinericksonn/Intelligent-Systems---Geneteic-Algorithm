@@ -1,4 +1,4 @@
-Intelligent Systems - Geneteic Algorithm
+Intelligent Systems - Genetic Algorithm
 
 ### Result: 
 
